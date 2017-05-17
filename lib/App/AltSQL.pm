@@ -523,6 +523,11 @@ sub handle_term_input {
 		$render_opts{one_row_per_column} = 1;
 	}
 
+    # \q quits
+	if ($input =~ m/^\\q$/) {
+		return $self->shutdown();
+	}
+
 	# Allow the user to pass non-SQL control verbs
 	if ($input =~ m/^\s*(quit|exit)\s*$/) {
 		return $self->shutdown();

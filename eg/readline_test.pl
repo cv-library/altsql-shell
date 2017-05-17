@@ -34,7 +34,7 @@ $term->bind_key(ord "\cc", 'my_abort');
 {
 	local $SIG{INT} = sub {};
 	while (defined (my $input = $term->readline(colored('prompt', 'red') . '> '))) {
-		if ($input =~ m{^quit}) {
+		if ($input =~ m{^(quit|\\q)}) {
 			last;
 		}
 	}

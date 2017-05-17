@@ -81,7 +81,7 @@ sub return_key {
 
 	## The user has pressed the 'enter' key.  If the buffer ends in ';' or '\G', or if they've typed the bare word 'quit' or 'exit', accept the buffer
 	my $input = join ' ', @{ $self->term->{lines} };
-	if ($input =~ m{(;|\\G|\\c)\s*$} || $input =~ m{^\s*(quit|exit)\s*$} || $input =~ m{^\s*$}) {
+	if ($input =~ m{(;|\\G|\\c|\\q)\s*$} || $input =~ m{^\s*(quit|exit)\s*$} || $input =~ m{^\s*$}) {
 		$self->term->accept_line();
 	}
 	else {
@@ -153,13 +153,13 @@ sub tidy_history {
 	my ($self, @history) = @_;
 
 	# Filter out exit/quit statements
-	@history = grep { ! /^(quit|exit)/ } @history;
+	@history = grep { ! /^(quit|exit|\\q)/ } @history;
 
 	# Limit it to a sane number
 	if ($#history > 1_000) {
 		splice @history, 0, $#history - 1_000;
 	}
-	
+
 	return @history;
 }
 

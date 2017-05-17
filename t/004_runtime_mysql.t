@@ -120,6 +120,15 @@ local $modifiers{"app create_view after"} = sub {
 	ok $resub->called, "exit; calls shutdown()";
 }
 
+ ## exit via \q;
+
+{
+	my $resub = modifier_resub skip_orig => 1;
+	local $modifiers{'app shutdown before'} = $resub->code;
+	$app->handle_term_input('\q');
+	ok $resub->called, "\\q calls shutdown()";
+}
+
  ## % eval
 
 {
