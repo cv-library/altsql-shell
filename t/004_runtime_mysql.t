@@ -30,7 +30,7 @@ BEGIN {
 		$FindBin::Bin . '/sql/sakila-schema.sql',
 		$FindBin::Bin . '/sql/sakila-data.sql',
 	],
-	mysql_client => '/opt/local/bin/mysql5',
+	mysql_client => $ENV{MYSQL_TEST_CLIENT} || '/opt/local/bin/mysql5',
 );
 
 my $app = App::AltSQL->new(
@@ -202,6 +202,14 @@ if ($app->model->sql_parser) {
 
 	$view = $app->model->handle_sql_input('select staff_id from staff where staff_id > 10');
 	cmp_deeply $view->buffer, re(qr/^Empty set/), "Empty set";
+}
+
+{
+	my $resub = modifier_resub skip_orig => 1;
+	my $view = $app->model->handle_sql_input("select ' spaced '");
+$DB::single = 1;
+	cmp_deeply $view->render_table, re(qr/spaced/), "data on red background";
+	#diag $view;
 }
 
 ## Done with tests

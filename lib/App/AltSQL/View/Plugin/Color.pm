@@ -32,6 +32,7 @@ my %default_config = (
 		is_null => 'blue',
 		is_primary_key => 'bold',
 		is_number => 'yellow',
+                is_untrimmed => 'red',
 	},
 );
 
@@ -43,7 +44,7 @@ sub format_column_cell {
 
 sub format_cell {
 	my ($self, $value, $spec) = @_;
-
+        
 	my %colors =
 		qw(default is_null is_primary_key is_number);
 
@@ -63,12 +64,17 @@ sub format_cell {
 		$key = 'default';
 	}
 
+        my @colors;
+        
 	if (my $color = $self->resolve_namespace_config_value(__PACKAGE__, ['cell_text', $key], \%default_config)) {
-		return colored $value, $color;
+                push @colors, $color;
 	}
-	else {
-		return $value;
-	}
+
+        if ($value =~/^\s+|\s+$/){
+                push @colors, 'on_' . $self->resolve_namespace_config_value(__PACKAGE__, ['cell_text', 'is_untrimmed'], \%default_config);
+        } 
+
+        return @colors ? colored $value, @colors : $value;
 }
 
 no Moose::Role;
